@@ -36,12 +36,12 @@ public record HuespedRequest(
         @NotBlank(message = "El teléfono es requerido")
         @Pattern(regexp = "^[0-9]{10}$", message = "El teléfono debe tener 10 dígitos")
         String telefono,
-/**********************************************************************/
+
         @NotBlank(message = "El documento es requerido")
-        @Size(min = 1, max = 16, message = "El documento debe tener entre 1 y 50 caracteres")
+        @Size(min = 1, max = 25, message = "El documento debe tener entre 1 y 25 caracteres")
         @Schema(description = "Documento presentado para identificación por el huésped", example = "INE")
         String documento,
-/**********************************************************************/
+
         @NotBlank(message = "La nacionalidad es requerido")
         @Size(min = 1, max = 25, message = "La nacionalidad debe tener entre 1 y 25 caracteres")
         @Schema(description = "Nacionalidad del huésped", example = "Mexicano")

@@ -7,15 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "HUESPEDES")
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Getter
+@Builder @Getter
 public class Huesped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,17 +34,13 @@ public class Huesped {
     @Column(name = "TELEFONO", length = 10, nullable = false)
     private String telefono;
 
-/********************************************************************/
-    @Column(name = "DOCUMENTO", length = 16, nullable = false)
+    @Column(name = "DOCUMENTO", length = 25, nullable = false)
     private String documento;
-
-/************************************************************************/
 
     @Column(name = "NACIONALIDAD", length = 25, nullable = false)
     private String nacionalidad;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "ESTADO_REGISTRO", nullable = false)
     private EstadoRegistro estadoRegistro;
 
@@ -72,15 +65,15 @@ public class Huesped {
                 "El telefono es requerido y debe tener exactamente 10 digitos (0-9)");
 
         StringCustomUtils.validarTamanio(documento,1,25,
-                "La nacionalidad  es requerida y debe de tener exactamente 12 caracteres");
+                "El documento es requerido y debe tener entre 1 y 25 caracteres");
 
-        StringCustomUtils.validarTamanio(nacionalidad,1,16,
-                "El documento  es requerida y debe de tener exactamente 12 caracteres");
+        StringCustomUtils.validarTamanio(nacionalidad,1,25,
+                "El documento  es requerido y debe de tener entre 1 y 25 caracteres");
     }
 
     private void validarNoEliminado() {
         if(this.estadoRegistro == EstadoRegistro.ELIMINADO)
-            throw new IllegalStateException("El médico ya está eliminado");
+            throw new IllegalStateException("El huésped ya está eliminado");
     }
 
     public void eliminar() {
