@@ -3,7 +3,7 @@ package com.dan.commons.dto.huespedes;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Información de un huésped")
-public record huespedResponse(
+public record HuespedResponse(
         @Schema(description = "Identificador único del huésped", example = "1")
         Long id,
 

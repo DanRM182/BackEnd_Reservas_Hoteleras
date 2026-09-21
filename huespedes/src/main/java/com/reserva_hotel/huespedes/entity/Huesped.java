@@ -105,7 +105,7 @@ public class Huesped {
     }
 
     public static Huesped crear(String nombre, String apellidoPaterno, String apellidoMaterno, String email, String telefono,
-                   String documento, String nacionalidad, EstadoRegistro estadoRegistro) {
+                   String documento, String nacionalidad) {
 
         validarDatos(nombre, apellidoPaterno, apellidoMaterno, email, telefono, documento, nacionalidad);
 

@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "Datos necesarios para guardar/modificar un huésped")
-public record huespedRequest(
+public record HuespedRequest(
         @NotBlank(message = "El nombre es requerido")
         @Size(min = 2, max = 50, message = "El nombre debe tener entre 2 y 50 caracteres")
         @Schema(description = "Nombre del huésped", example = "Juan Gabriel")
