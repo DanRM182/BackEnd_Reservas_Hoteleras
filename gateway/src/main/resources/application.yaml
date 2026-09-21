@@ -9,24 +9,10 @@ spring:
       server:
         webflux:
           routes:
-            - id:
-              uri: lb://
+            - id: huespedes
+              uri: lb://huespedes
               predicates:
-                - Path=/api//**
-              filters:
-                - StripPrefix=2
-
-            - id:
-              uri: lb://
-              predicates:
-                - Path=/api//**
-              filters:
-                - StripPrefix=2
-
-            - id:
-              uri: lb://
-              predicates:
-                - Path=/api//**
+                - Path=/api/huespedes/**
               filters:
                 - StripPrefix=2
     loadbalancer:

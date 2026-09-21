@@ -138,12 +138,12 @@ public class HuespedServiceImpl implements HuespedService {
         if(huespedRepository.existsByTelefonoAndEstadoRegistroAndIdNot(request.telefono(),
                 EstadoRegistro.ACTIVO, id))
             throw new IllegalArgumentException("Ya existe un huésped activo registrado con el teléfono: "
-                    + request.email());
+                    + request.telefono());
 
         if(huespedRepository.existsByDocumentoIgnoreCaseAndEstadoRegistroAndIdNot(request.documento(),
                 EstadoRegistro.ACTIVO, id))
             throw new IllegalArgumentException("Ya existe un huésped activo registrado con el documento: "
-                    + request.email());
+                    + request.documento());
     }
 
 }
