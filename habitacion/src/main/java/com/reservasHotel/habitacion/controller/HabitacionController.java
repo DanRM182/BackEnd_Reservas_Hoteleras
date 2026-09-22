@@ -1,9 +1,9 @@
 package com.reservasHotel.habitacion.controller;
 
-import com.dan.commons.controller.CrudController;
-import com.dan.commons.dto.habitacion.HabitacionEstadoRequest;
-import com.dan.commons.dto.habitacion.HabitacionRequest;
-import com.dan.commons.dto.habitacion.HabitacionResponse;
+import com.reservasHotel.commons.controller.CrudController;
+import com.reservasHotel.commons.dto.habitacion.HabitacionEstadoRequest;
+import com.reservasHotel.commons.dto.habitacion.HabitacionRequest;
+import com.reservasHotel.commons.dto.habitacion.HabitacionResponse;
 import com.reservasHotel.habitacion.services.HabitacionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

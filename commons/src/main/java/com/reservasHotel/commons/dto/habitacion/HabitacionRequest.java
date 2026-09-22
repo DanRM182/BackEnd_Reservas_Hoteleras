@@ -1,6 +1,6 @@
-package com.dan.commons.dto.habitacion;
+package com.reservasHotel.commons.dto.habitacion;
 
-import com.dan.commons.enums.TipoHabitacion;
+import com.reservasHotel.commons.enums.TipoHabitacion;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 

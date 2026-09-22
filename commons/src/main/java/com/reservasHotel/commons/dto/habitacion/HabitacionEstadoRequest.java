@@ -1,6 +1,6 @@
-package com.dan.commons.dto.habitacion;
+package com.reservasHotel.commons.dto.habitacion;
 
-import com.dan.commons.enums.EstadoHabitacion;
+import com.reservasHotel.commons.enums.EstadoHabitacion;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 @Schema(description = "Datos para cambiar manualmente el estado de una habitación")

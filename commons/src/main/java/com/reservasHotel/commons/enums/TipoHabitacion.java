@@ -1,4 +1,4 @@
-package com.dan.commons.enums;
+package com.reservasHotel.commons.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

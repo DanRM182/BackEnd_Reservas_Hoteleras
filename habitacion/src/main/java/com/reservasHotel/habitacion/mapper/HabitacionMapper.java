@@ -1,10 +1,10 @@
 package com.reservasHotel.habitacion.mapper;
 
-import com.dan.commons.dto.habitacion.HabitacionRequest;
-import com.dan.commons.dto.habitacion.HabitacionResponse;
-import com.dan.commons.enums.EstadoHabitacion;
-import com.dan.commons.enums.EstadoRegistro;
-import com.dan.commons.mapper.CommonMapper;
+import com.reservasHotel.commons.dto.habitacion.HabitacionRequest;
+import com.reservasHotel.commons.dto.habitacion.HabitacionResponse;
+import com.reservasHotel.commons.enums.EstadoHabitacion;
+import com.reservasHotel.commons.enums.EstadoRegistro;
+import com.reservasHotel.commons.mapper.CommonMapper;
 import com.reservasHotel.habitacion.entity.Habitacion;
 import org.springframework.stereotype.Component;
 

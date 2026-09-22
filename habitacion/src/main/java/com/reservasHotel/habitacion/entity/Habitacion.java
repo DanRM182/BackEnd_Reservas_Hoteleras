@@ -1,13 +1,11 @@
 package com.reservasHotel.habitacion.entity;
 
-import com.dan.commons.enums.EstadoHabitacion;
-import com.dan.commons.enums.EstadoRegistro;
-import com.dan.commons.enums.TipoHabitacion;
-import com.dan.commons.utils.StringCustomUtils;
-import com.dan.commons.utils.ValoresNumericosUtils;
+import com.reservasHotel.commons.enums.EstadoHabitacion;
+import com.reservasHotel.commons.enums.EstadoRegistro;
+import com.reservasHotel.commons.enums.TipoHabitacion;
+import com.reservasHotel.commons.utils.StringCustomUtils;
+import com.reservasHotel.commons.utils.ValoresNumericosUtils;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
