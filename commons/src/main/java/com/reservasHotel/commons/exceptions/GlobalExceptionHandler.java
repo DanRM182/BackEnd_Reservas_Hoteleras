@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,6 +14,8 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import com.reservasHotel.commons.dto.CustomErrorResponse;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static org.apache.logging.log4j.message.MapMessage.MapFormat.JSON;
 
 @RestControllerAdvice
 @Slf4j
@@ -70,6 +73,21 @@ public class GlobalExceptionHandler {
         log.warn("Error al procesar un recurso: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new CustomErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<CustomErrorResponse>
+    handleHttpMessageNotReadableException(
+            HttpMessageNotReadableException e
+    ) {
+        log.warn("Solicitud rechazada por formato o valor inválido en el JSON");
+
+        return ResponseEntity.badRequest().body(
+                new CustomErrorResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "El cuerpo de la solicitud contiene un formato o valor inválido"
+                )
+        );
     }
 
 
