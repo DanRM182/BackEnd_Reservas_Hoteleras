@@ -26,7 +26,20 @@ CAPACIDAD NUMBER NOT NULL,
               'DISPONIBLE',
               'OCUPADA',
               'LIMPIEZA',
-              'MANTENIMIENTO'))
+              'MANTENIMIENTO')),
+
+
+CONSTRAINT CHK_HABITACION_TIPO
+    CHECK (
+        TRIM(TIPO_HABITACION) IS NOT NULL
+            AND TRIM(TIPO_HABITACION) IN (
+                                          'INDIVIDUAL',
+                                          'DOBLE',
+                                          'SUITE'
+            )
+        )
+
+
 
 );
 

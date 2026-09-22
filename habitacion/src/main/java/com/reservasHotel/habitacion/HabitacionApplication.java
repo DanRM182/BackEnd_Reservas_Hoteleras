@@ -1,9 +1,9 @@
-package com.dan.habitacion;
+package com.reservasHotel.habitacion;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.reservasHotel.habitacion","com.dan.commons"})
 public class HabitacionApplication {
 
 	public static void main(String[] args) {

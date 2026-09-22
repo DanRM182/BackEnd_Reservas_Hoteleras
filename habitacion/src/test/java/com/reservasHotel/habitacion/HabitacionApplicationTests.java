@@ -1,4 +1,4 @@
-package com.dan.habitacion;
+package com.reservasHotel.habitacion;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
