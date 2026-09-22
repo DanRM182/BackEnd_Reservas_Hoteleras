@@ -73,5 +73,17 @@ public class Reserva {
         validarRangoFechas(fechaEntrada, fechaSalida);
     }
 
+    public static Reserva crear(Long idHabitacion, Long idHuesped, LocalDate fechaEntrada,
+                                LocalDate fechaSalida) {
+        validarDatos(idHabitacion, idHuesped, fechaEntrada, fechaSalida);
 
+        return Reserva.builder()
+                .idHabitacion(idHabitacion)
+                .idHuesped(idHuesped)
+                .fechaEntrada(fechaEntrada)
+                .fechaSalida(fechaSalida)
+                .estadoRegistro(EstadoRegistro.ACTIVO)
+                .estadoReserva(EstadoReserva.CONFIRMADA)
+                .build();
+    }
 }
