@@ -5,4 +5,5 @@ import com.reservasHotel.reservas.dto.ReservaRequest;
 import com.reservasHotel.reservas.dto.ReservaResponse;
 
 public interface ReservaService extends CrudService<ReservaRequest, ReservaResponse> {
+    void validarEstadoReservasHuesped(Long idHuesped);
 }

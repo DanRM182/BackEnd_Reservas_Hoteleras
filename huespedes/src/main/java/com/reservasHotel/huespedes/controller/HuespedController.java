@@ -19,9 +19,9 @@ public class HuespedController extends CrudController<HuespedRequest, HuespedRes
         super(service);
     }
 
-    @GetMapping("/id-paciente/{id}")
+    @GetMapping("/id-huesped/{id}")
     @Operation(summary = "Obtener huésped por ID sin importar el estado del registro")
-    public ResponseEntity<HuespedResponse> obtenerPacientePorIdSinEstado(
+    public ResponseEntity<HuespedResponse> obtenerHuespedPorIdSinEstado(
             @PathVariable @Positive(message = "El ID debe ser positivo") Long id
     ) {
         return ResponseEntity.ok(service.obtenerPorIdSinEstado(id));

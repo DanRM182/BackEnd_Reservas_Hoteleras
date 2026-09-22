@@ -54,7 +54,7 @@ public class Reserva {
         if(fechaSalida == null)
             throw new IllegalArgumentException("La fecha de salida es requerida");
 
-        if(!fechaEntrada.isAfter(fechaSalida))
+        if(!fechaEntrada.isBefore(fechaSalida))
             throw new IllegalArgumentException(("La fecha de entrada debe ser " +
                     "anterior a la fecha de salida"));
     }
