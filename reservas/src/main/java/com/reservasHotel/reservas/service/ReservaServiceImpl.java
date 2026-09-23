@@ -36,11 +36,6 @@ public class ReservaServiceImpl implements ReservaService {
     private final ReservaMapper reservaMapper;
     private final HuespedClient huespedClient;
 
-
-
-    private final ReservaRepository reservaRepository;
-    private final ReservaMapper reservaMapper;
-
     @Override
     public List<ReservaResponse> listar() {
         log.info("Listando todas las reservas activas");
@@ -51,9 +46,6 @@ public class ReservaServiceImpl implements ReservaService {
                         obtenerHuespedSinEstado(reserva.getIdHuesped()),
                         null
                 )).toList();
-        log.info("obteniendo reservas");
-        return reservaRepository.findAllByEstadoRegistro(EstadoRegistro.ACTIVO).stream()
-                .map(reservaMapper::entidadAResponse).toList();
     }
 
     @Override
@@ -101,7 +93,6 @@ public class ReservaServiceImpl implements ReservaService {
                 reservaRepository::existsByIdHuespedAndEstadoReservaIn);
     }
 
-
     @Override
     public void eliminar(Long id) {
 
@@ -146,7 +137,6 @@ public class ReservaServiceImpl implements ReservaService {
                 .orElseThrow(()-> new RecursoNoEncontradoException(
                         "No se encontro una reserva activa con el id: " + id
                 ));
-
     }
 
 }

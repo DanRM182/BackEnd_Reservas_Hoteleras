@@ -11,11 +11,15 @@ import java.util.Optional;
 
 public interface HabitacionRepository  extends JpaRepository<Habitacion, Long> {
     List<Habitacion> findAllByEstadoRegistro(EstadoRegistro estadoRegistro);
+
     Optional<Habitacion> findByIdAndEstadoRegistro(Long id ,EstadoRegistro estadoRegistro);
+
+    Optional<Habitacion> findById(Long id);
+
     boolean existsByNumeroHabitacionAndEstadoRegistro(String numeroHabitacion, EstadoRegistro estadoRegistro);
+
     boolean existsByNumeroHabitacionAndEstadoRegistroAndIdNot(String numeroHabitacion,EstadoRegistro estadoRegistro, Long id);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Habitacion> findWithLockByIdAndEstadoRegistro(Long id, EstadoRegistro estadoRegistro);
-
-
 }
