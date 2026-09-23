@@ -11,7 +11,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Getter
 public enum EstadoReserva {
-    CONFIRMADA(1L, "Reservación creada", true, true, true, true) {
+    CONFIRMADA(1L, "Reservación creada", true, true, false, true) {
         @Override
         public Set<EstadoReserva> puedeCambiar() {
             return EnumSet.of(EN_CURSO, CANCELADA);
