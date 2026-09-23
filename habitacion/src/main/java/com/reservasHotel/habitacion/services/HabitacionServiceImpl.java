@@ -5,6 +5,7 @@ import com.reservasHotel.commons.dto.habitacion.HabitacionResponse;
 import com.reservasHotel.commons.enums.EstadoHabitacion;
 import com.reservasHotel.commons.enums.EstadoRegistro;
 import com.reservasHotel.commons.exceptions.RecursoNoEncontradoException;
+import com.reservasHotel.commons.utils.ValoresNumericosUtils;
 import com.reservasHotel.habitacion.entity.Habitacion;
 import com.reservasHotel.habitacion.mapper.HabitacionMapper;
 import com.reservasHotel.habitacion.repository.HabitacionRepository;
@@ -27,7 +28,7 @@ public class HabitacionServiceImpl implements HabitacionService {
 
     @Override
     public HabitacionResponse actualizarEstado(Long id, EstadoHabitacion nuevoEstado) {
-        Habitacion habitacion = obtenerHabitacionActivaPorId(id);
+        Habitacion habitacion = obtenerHabitacionActivaParaActualizar(id);
         habitacion.actualizarEstado(nuevoEstado);
         return habitacionMapper.entidadAResponse(habitacion);
     }
@@ -56,9 +57,24 @@ public class HabitacionServiceImpl implements HabitacionService {
         return habitacionMapper.entidadAResponse(guuarda);
     }
 
+
+    @Override
+    public HabitacionResponse ocuparPorReserva(Long idHabitacion, Long idReserva) {
+        Habitacion habitacion=obtenerHabitacionActivaParaActualizar(idHabitacion);
+        habitacion.ocuparPorReserva(idReserva);
+        return habitacionMapper.entidadAResponse(habitacion);
+    }
+
+    @Override
+    public HabitacionResponse liberarPorReserva(Long idHabitacion, Long idReserva) {
+        Habitacion habitacion =obtenerHabitacionActivaParaActualizar(idHabitacion);
+        habitacion.liberarPorReserva(idReserva);
+        return habitacionMapper.entidadAResponse(habitacion);
+    }
+
     @Override
     public HabitacionResponse actualizar(HabitacionRequest request, Long id) {
-        Habitacion habitacion = obtenerHabitacionActivaPorId(id);
+        Habitacion habitacion = obtenerHabitacionActivaParaActualizar(id);
         String numeroHabitacion=request.numeroHabitacion().trim();
         if (!numeroHabitacion.equals(habitacion.getNumeroHabitacion()))
             validarDatosUnicos(request,id);
@@ -73,7 +89,7 @@ public class HabitacionServiceImpl implements HabitacionService {
 
     @Override
     public void eliminar(Long id) {
-        Habitacion habitacion =obtenerHabitacionActivaPorId(id);
+        Habitacion habitacion =obtenerHabitacionActivaParaActualizar(id);
         habitacion.eliminar();
 
     }
@@ -99,5 +115,11 @@ public class HabitacionServiceImpl implements HabitacionService {
         if (existeDuplicado)
             throw new IllegalStateException("Ya existe una habitacion activa con ese numerto " + numeroHabitacion);
 
+    }
+
+    private  Habitacion obtenerHabitacionActivaParaActualizar(Long id){
+        ValoresNumericosUtils.validarLongPositivo(id,"Eli di de la habitacion debe de ser positivo");
+        return habitacionRepository.findWithLockByIdAndEstadoRegistro(id, EstadoRegistro.ACTIVO)
+                .orElseThrow(()-> new RecursoNoEncontradoException("Habitacion activa no encontrada con id: " + id));
     }
 }
