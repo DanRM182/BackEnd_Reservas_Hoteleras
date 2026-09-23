@@ -1,9 +1,11 @@
 package com.reservasHotel.huespedes.services;
 
+import com.reservasHotel.commons.clients.ReservaClient;
 import com.reservasHotel.commons.dto.huespedes.HuespedRequest;
 import com.reservasHotel.commons.dto.huespedes.HuespedResponse;
 import com.reservasHotel.commons.enums.EstadoRegistro;
 import com.reservasHotel.commons.exceptions.RecursoNoEncontradoException;
+import com.reservasHotel.commons.utils.FunctionUtils;
 import com.reservasHotel.huespedes.entity.Huesped;
 import com.reservasHotel.huespedes.mapper.HuespedMapper;
 import com.reservasHotel.huespedes.repository.HuespedRepository;
@@ -21,6 +23,7 @@ import java.util.List;
 public class HuespedServiceImpl implements HuespedService {
     private final HuespedRepository huespedRepository;
     private final HuespedMapper huespedMapper;
+    private final ReservaClient reservaClient;
 
     @Override
     @Transactional(readOnly = true)
@@ -69,7 +72,7 @@ public class HuespedServiceImpl implements HuespedService {
 
         validarActualizarDatosUnicos(request, id);
 
-/********************VALIDAR RESERVAS DEL HUESPED***********************************************/
+        validarEstadoReservasHuesped(id);
 
         huesped.actualizar(
                 request.nombre(),
@@ -91,7 +94,7 @@ public class HuespedServiceImpl implements HuespedService {
 
         log.info("Eliminando huésped con ID: {}", id);
 
-        /**************************VALIDAR RESERVAS DEL HUÉSPED**********/
+        validarEstadoReservasHuesped(id);
 
         huesped.eliminar();
 
@@ -146,4 +149,10 @@ public class HuespedServiceImpl implements HuespedService {
                     + request.documento());
     }
 
+    private void validarEstadoReservasHuesped(Long id) {
+        log.info("Validando si el huésped tiene reservas con estado EN_CURSO");
+
+        FunctionUtils.validarEstadoCitas(id, reservaClient::validarEstadoReservasHuesped,
+                "El huésped con ID: " + id + " tiene reservas en curso");
+    }
 }
