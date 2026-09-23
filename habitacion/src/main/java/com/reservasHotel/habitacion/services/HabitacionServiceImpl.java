@@ -93,11 +93,9 @@ public class HabitacionServiceImpl implements HabitacionService {
 
         log.info("Actualizando estado de habitación con id: {}", id);
 
-        if(EstadoHabitacion.DISPONIBLE.getCodigo().equals(idEstado)
-        && habitacion.getEstadoHabitacion().equals(EstadoHabitacion.OCUPADA))
-            throw new IllegalStateException("No se puede cambiar manualmente " +
-                    "el estado de la habitación de OCUPADA a DISPONIBLE");
+        validarCambioDisponibleOcupada(habitacion, idEstado);
 
+        habitacion.actualizarEstado(EstadoHabitacion.obtenerEstadoHabitacionPorCodigo(idEstado));
 
         return habitacionMapper.entidadAResponse(habitacion);
     }
@@ -148,8 +146,19 @@ public class HabitacionServiceImpl implements HabitacionService {
     }
 
     private void validarEstadoModificable(Habitacion habitacion) {
+        log.info("Validando el estado de la habitación");
+
         if(habitacion.getEstadoHabitacion().equals(EstadoHabitacion.OCUPADA))
             throw new IllegalArgumentException("La habitación con id "
             + habitacion.getId() + " tiene estado OCUPADA");
+    }
+
+    private void validarCambioDisponibleOcupada(Habitacion habitacion, Long idEstado) {
+        log.info("Validando si se quiere cambiar de estado OCUPADO a DISPONIBLE");
+
+        if(EstadoHabitacion.DISPONIBLE.getCodigo().equals(idEstado)
+                && habitacion.getEstadoHabitacion().equals(EstadoHabitacion.OCUPADA))
+            throw new IllegalStateException("No se puede cambiar manualmente " +
+                    "el estado de la habitación de OCUPADA a DISPONIBLE");
     }
 }
