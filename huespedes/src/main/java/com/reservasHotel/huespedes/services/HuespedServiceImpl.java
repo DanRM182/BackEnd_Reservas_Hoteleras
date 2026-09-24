@@ -150,7 +150,7 @@ public class HuespedServiceImpl implements HuespedService {
     }
 
     private void validarEstadoReservasHuesped(Long id) {
-            log.info("Validando si el huésped tiene reservas con estado {}", Esta);
+        log.info("Validando si el huésped tiene reservas con estado {}" );//esta
 
         FunctionUtils.validarEstadoCitas(id, reservaClient::validarEstadoReservasHuesped,
                 "El huésped con ID: " + id + " tiene reservas en curso");

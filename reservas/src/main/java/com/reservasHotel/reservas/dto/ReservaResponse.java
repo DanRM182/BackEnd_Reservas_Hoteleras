@@ -1,6 +1,7 @@
 package com.reservasHotel.reservas.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.reservasHotel.commons.dto.habitacion.DatosHabitacion;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ public record ReservaResponse(
         Object huesped,
 
         @Schema(description = "Información de la habitación asociada a la reserva")
-        Object habitacion,
+        DatosHabitacion habitacion,
 
         @Schema(description = "Estado actual de la reserva", example = "Reservación creada")
         String estadoReserva,

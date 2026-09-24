@@ -7,8 +7,13 @@ public record HuespedResponse(
         @Schema(description = "Identificador único del huésped", example = "1")
         Long id,
 
+
+        //apellidos
         @Schema(description = "Nombre completo del huésped", example = "Carlos Ramírez López")
         String nombre,
+
+        String apellidoPaterno,
+        String apellidoMaterno,
 
         @Schema(description = "Email del huésped", example = "test@test.com")
         String email,
