@@ -26,10 +26,9 @@ public class HuespedMapper implements CommonMapper<HuespedRequest, HuespedRespon
         return entidad != null ?
                 new HuespedResponse(
                         entidad.getId(),
-                        String.join(" ",
-                                entidad.getNombre(),
-                                entidad.getApellidoPaterno(),
-                                entidad.getApellidoMaterno()),
+                        entidad.getNombre(),
+                        entidad.getApellidoPaterno(),
+                        entidad.getApellidoMaterno(),
                         entidad.getEmail(),
                         entidad.getTelefono(),
                         entidad.getDocumento(),

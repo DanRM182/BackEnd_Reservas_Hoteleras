@@ -54,8 +54,16 @@ public class HabitacionServiceImpl implements HabitacionService {
     public HabitacionResponse registrar(HabitacionRequest request) {
         log.info("Registrando datos de habitación");
 
-        Habitacion habitacion = habitacionMapper.requestAEntidad(request);
+        TipoHabitacion tipo = TipoHabitacion.obtenerTipoHabitacionPorCodigo(
+                request.idTipoHabitacion()
+        );
 
+        Habitacion habitacion = Habitacion.crear(
+                request.numeroHabitacion().trim(),
+                tipo,
+                request.precio(),
+                request.capacidad()
+        );
         validarDatosUnicos(request);
 
         habitacionRepository.save(habitacion);

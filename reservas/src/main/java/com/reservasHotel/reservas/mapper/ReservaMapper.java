@@ -1,5 +1,7 @@
 package com.reservasHotel.reservas.mapper;
 
+import com.reservasHotel.commons.dto.habitacion.DatosHabitacion;
+import com.reservasHotel.commons.dto.habitacion.HabitacionResponse;
 import com.reservasHotel.commons.dto.huespedes.DatosHuesped;
 import com.reservasHotel.commons.dto.huespedes.HuespedResponse;
 import com.reservasHotel.commons.mapper.CommonMapper;
@@ -31,12 +33,12 @@ public class ReservaMapper implements CommonMapper<ReservaRequest, ReservaRespon
                         entidad.getFechaSalida()) : null;
     }
 
-    public ReservaResponse entidadAResponse(Reserva entidad, HuespedResponse huesped, Object habitacion) {
+    public ReservaResponse entidadAResponse(Reserva entidad, HuespedResponse huesped, HabitacionResponse habitacion) {
         return entidad != null ?
                 new ReservaResponse(
                         entidad.getId(),
                         huespedResponseADatosHuesped(huesped),
-                        habitacion,
+                        habitacionResponseADatosHabitacion(habitacion),
                         entidad.getEstadoReserva().getDescripcion(),
                         entidad.getFechaEntrada(),
                         entidad.getFechaSalida()) : null;
@@ -50,5 +52,17 @@ public class ReservaMapper implements CommonMapper<ReservaRequest, ReservaRespon
                         huesped.telefono(),
                         huesped.documento(),
                         huesped.nacionalidad()) : null;
+    }
+
+    private DatosHabitacion habitacionResponseADatosHabitacion(
+            HabitacionResponse habitacion) {
+
+        return habitacion != null
+                ? new DatosHabitacion(
+                habitacion.id(),
+                habitacion.numeroHabitacion(),
+                habitacion.tipoHabitacion()
+        )
+                : null;
     }
 }

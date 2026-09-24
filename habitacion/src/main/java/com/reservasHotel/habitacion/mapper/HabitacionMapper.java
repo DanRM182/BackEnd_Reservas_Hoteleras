@@ -10,8 +10,8 @@ import com.reservasHotel.habitacion.entity.Habitacion;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HabitacionMapper implements CommonMapper<HabitacionRequest, HabitacionResponse, Habitacion> {
-    @Override
+public class HabitacionMapper implements CommonMapper<HabitacionRequest, HabitacionResponse, Habitacion>  {
+   @Override
     public Habitacion requestAEntidad(HabitacionRequest request) {
         return request != null ?
                 Habitacion.crear(
@@ -22,15 +22,19 @@ public class HabitacionMapper implements CommonMapper<HabitacionRequest, Habitac
                         request.capacidad()) : null;
     }
 
-    @Override
+
+
+
     public HabitacionResponse entidadAResponse(Habitacion entidad) {
-       return entidad != null ?
-               new HabitacionResponse(
-                   entidad.getId(),
-                   entidad.getNumeroHabitacion(),
-                   entidad.getTipoHabitacion().getDescripcion(),
-                   entidad.getEstadoHabitacion().getDescripcion(),
-                   entidad.getPrecio(),
-                   entidad.getCapacidad()) : null;
+        return entidad != null
+                ? new HabitacionResponse(
+                entidad.getId(),
+                entidad.getNumeroHabitacion(),
+                entidad.getTipoHabitacion().getDescripcion(),
+                entidad.getEstadoHabitacion().getDescripcion(),
+                entidad.getPrecio(),
+                entidad.getCapacidad()
+        )
+                : null;
     }
 }
