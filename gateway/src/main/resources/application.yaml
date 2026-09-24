@@ -15,6 +15,21 @@ spring:
                 - Path=/api/huespedes/**
               filters:
                 - StripPrefix=2
+
+            - id: habitaciones
+              uri: lb://habitacion
+              predicates:
+                - Path=/api/habitaciones/**
+              filters:
+                - StripPrefix=2
+
+            - id: reservas
+              uri: lb://reservas
+              predicates:
+                - Path=/api/reservas/**
+              filters:
+                - StripPrefix=2
+
     loadbalancer:
       enabled: true
 eureka:

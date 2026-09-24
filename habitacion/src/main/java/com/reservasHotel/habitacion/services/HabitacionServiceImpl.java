@@ -67,6 +67,27 @@ public class HabitacionServiceImpl implements HabitacionService {
     }
 
     @Override
+    public HabitacionResponse ocuparPorReserva(Long id) {
+        log.info("reservando habitacion cambiando estado a ocupada");
+
+        Habitacion habitacion = obtenerHabitacionActivaPorId(id);
+
+        habitacion.ocuparPorReserva();
+
+        return habitacionMapper.entidadAResponse(habitacion);
+    }
+
+    @Override
+    public HabitacionResponse liberarPorReserva(Long id) {
+
+        Habitacion habitacion = obtenerHabitacionActivaPorId(id);
+
+        habitacion.liberarPorReserva();
+
+        return habitacionMapper.entidadAResponse(habitacion);
+    }
+
+    @Override
     public HabitacionResponse actualizar(HabitacionRequest request, Long id) {
         Habitacion habitacion = obtenerHabitacionActivaPorId(id);
 

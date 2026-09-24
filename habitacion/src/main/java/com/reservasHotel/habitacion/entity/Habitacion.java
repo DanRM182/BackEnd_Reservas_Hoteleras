@@ -126,6 +126,26 @@ public class Habitacion {
                 .build();
     }
 
+    //comprueba que no este eliminada
+    //rechaza si esta en otros estados-solo debe de ser disponible
+    //si esta disponible cambia su estado a ocupada
+    public void ocuparPorReserva(){
+        validarNoEliminado();
+        if (this.estadoHabitacion != EstadoHabitacion.DISPONIBLE)
+            throw new IllegalStateException("La habitacion debe estar disponible par reserva");
+        this.estadoHabitacion=EstadoHabitacion.OCUPADA;
+    }
+
+
+    public void liberarPorReserva(){
+        validarNoEliminado();
+
+        if (this.estadoHabitacion != EstadoHabitacion.OCUPADA)
+            throw new IllegalStateException("La habitacion debe de estar ocupada para liberarla");
+
+        this.estadoHabitacion=EstadoHabitacion.DISPONIBLE;
+    }
+
     /*
     public void ocuparPorReserva(Long idReserva){
         validarNoEliminado();

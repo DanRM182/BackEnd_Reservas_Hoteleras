@@ -140,4 +140,15 @@ public class Reserva {
                 .estadoReserva(EstadoReserva.CONFIRMADA)
                 .build();
     }
+
+    public void eliminar (){
+        validarNoEliminada();
+
+        if (this.estadoReserva== null)
+            throw new IllegalStateException("la reserva no tiene un estado valido");
+        if (this.estadoReserva==EstadoReserva.EN_CURSO)
+            throw new IllegalStateException("no se puede eliminar una reserva en curso");
+
+        this.estadoRegistro=EstadoRegistro.ELIMINADO;
+    }
 }
