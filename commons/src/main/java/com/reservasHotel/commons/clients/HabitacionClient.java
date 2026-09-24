@@ -12,10 +12,15 @@ public interface HabitacionClient {
     @GetMapping("/{id}")
     HabitacionResponse obtenerHabitacionActivaPorId(@PathVariable("id")Long id);
 
+    @GetMapping("/id-habitacion/{id}")
+    HabitacionResponse obtenerHabitacionPorIdSinEstado(@PathVariable("id")Long id);
+
     @PatchMapping("/{id}/ocupar")
     HabitacionResponse ocuparPorReserva(@PathVariable("id")Long id);
 
     @PatchMapping("/{id}/liberar")
     HabitacionResponse liberarPorReserva(@PathVariable("id")Long id);
+
+
 
 }

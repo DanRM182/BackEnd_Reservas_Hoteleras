@@ -142,9 +142,10 @@ public class HabitacionServiceImpl implements HabitacionService {
 
     private Habitacion obtenerHabitacionPorId(Long id){
         log.info("Buscando habitación con id {}", id);
-        return habitacionRepository.findByIdAndEstadoRegistro(id, EstadoRegistro.ACTIVO)
+        return habitacionRepository.findById(id)
                 .orElseThrow(()-> new RecursoNoEncontradoException("Habitacion activa no encontrada con id:" + id));
     }
+
 
     private void validarDatosUnicos(HabitacionRequest request) {
         log.info("Validando unicidad de número de habitación");

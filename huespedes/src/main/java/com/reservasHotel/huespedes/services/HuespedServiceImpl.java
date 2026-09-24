@@ -70,9 +70,9 @@ public class HuespedServiceImpl implements HuespedService {
 
         log.info("Actualizando huésped con id: {}", id);
 
+        validarEstadoReservasHuesped(id);
         validarActualizarDatosUnicos(request, id);
 
-        validarEstadoReservasHuesped(id);
 
         huesped.actualizar(
                 request.nombre(),
@@ -150,7 +150,7 @@ public class HuespedServiceImpl implements HuespedService {
     }
 
     private void validarEstadoReservasHuesped(Long id) {
-        log.info("Validando si el huésped tiene reservas con estado EN_CURSO");
+            log.info("Validando si el huésped tiene reservas con estado {}", Esta);
 
         FunctionUtils.validarEstadoCitas(id, reservaClient::validarEstadoReservasHuesped,
                 "El huésped con ID: " + id + " tiene reservas en curso");

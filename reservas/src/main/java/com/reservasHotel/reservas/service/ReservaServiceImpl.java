@@ -45,17 +45,23 @@ public class ReservaServiceImpl implements ReservaService {
         log.info("Listando todas las reservas activas");
 
         return reservaRepository.findByEstadoRegistro(EstadoRegistro.ACTIVO)
-                .stream().map(reserva -> reservaMapper.entidadAResponse(
+                .stream().map(this::obtenerRespuestaCompleta)
+                .toList();
+    }
+
+    /*reserva -> reservaMapper.entidadAResponse(
                         reserva,
                         obtenerHuespedSinEstado(reserva.getIdHuesped()),
                         null
-                )).toList();
-    }
+                )*/
 
     @Override
     public ReservaResponse obtenerPorId(Long id) {
-        return reservaMapper.entidadAResponse(buscarReservaActiva(id));
+        return obtenerRespuestaCompleta(buscarReservaActiva(id));
     }
+
+    /*
+    * reservaMapper.entidadAResponse(buscarReservaActiva(id))*/
 
     @Override
     public ReservaResponse registrar(ReservaRequest request) {
@@ -128,11 +134,9 @@ public class ReservaServiceImpl implements ReservaService {
 
         Reserva reserva = buscarReservaActiva(id);
 
-        boolean liberarHabitacion = reserva.getEstadoReserva() == EstadoReserva.CONFIRMADA;
-
         reserva.eliminar();
 
-        if (liberarHabitacion)
+        if (reserva.getEstadoReserva() == EstadoReserva.CONFIRMADA)
             habitacionClient.liberarPorReserva(reserva.getIdHabitacion());
 
     }
@@ -195,6 +199,16 @@ public class ReservaServiceImpl implements ReservaService {
 
     }
 
+
+    private HabitacionResponse obtenerHabitacionSinEstado(Long id){
+
+        return validarObjetoRecibido(
+                id,
+                habitacionClient::obtenerHabitacionPorIdSinEstado, "Habitacion no encontrada por su id: " + id);
+
+    }
+
+
     private HabitacionResponse aplicarCambioEstado(Reserva reserva, EstadoReserva nuevoEstado){
 
         return switch (nuevoEstado){
@@ -241,7 +255,7 @@ public class ReservaServiceImpl implements ReservaService {
         return reservaMapper.entidadAResponse(
                 reserva,
                 obtenerHuespedSinEstado(reserva.getIdHuesped()),
-                obtenerHabitacionActiva(reserva.getIdHabitacion())
+                obtenerHabitacionSinEstado(reserva.getIdHabitacion())
         );
     }
 
