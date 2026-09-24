@@ -1,7 +1,10 @@
 package com.reservasHotel.reservas.service;
 
+import com.reservasHotel.commons.clients.HabitacionClient;
 import com.reservasHotel.commons.clients.HuespedClient;
+import com.reservasHotel.commons.dto.habitacion.HabitacionResponse;
 import com.reservasHotel.commons.dto.huespedes.HuespedResponse;
+import com.reservasHotel.commons.enums.EstadoHabitacion;
 import com.reservasHotel.commons.enums.EstadoRegistro;
 import com.reservasHotel.commons.exceptions.EntidadRelacionadaException;
 import com.reservasHotel.commons.exceptions.RecursoNoEncontradoException;
@@ -35,23 +38,30 @@ public class ReservaServiceImpl implements ReservaService {
     private final ReservaRepository reservaRepository;
     private final ReservaMapper reservaMapper;
     private final HuespedClient huespedClient;
+    private final HabitacionClient habitacionClient;
 
     @Override
     public List<ReservaResponse> listar() {
         log.info("Listando todas las reservas activas");
 
         return reservaRepository.findByEstadoRegistro(EstadoRegistro.ACTIVO)
-                .stream().map(reserva -> reservaMapper.entidadAResponse(
+                .stream().map(this::obtenerRespuestaCompleta)
+                .toList();
+    }
+
+    /*reserva -> reservaMapper.entidadAResponse(
                         reserva,
                         obtenerHuespedSinEstado(reserva.getIdHuesped()),
                         null
-                )).toList();
-    }
+                )*/
 
     @Override
     public ReservaResponse obtenerPorId(Long id) {
-        return reservaMapper.entidadAResponse(buscarReservaActiva(id));
+        return obtenerRespuestaCompleta(buscarReservaActiva(id));
     }
+
+    /*
+    * reservaMapper.entidadAResponse(buscarReservaActiva(id))*/
 
     @Override
     public ReservaResponse registrar(ReservaRequest request) {
@@ -61,25 +71,37 @@ public class ReservaServiceImpl implements ReservaService {
 
         HuespedResponse huesped = obtenerHuespedActivo(request.idHuesped());
 
+        HabitacionResponse habitacion = obtenerHabitacionActiva(request.idHabitacion());
+
         //VALIDACIONES
+        validarHabitacionDisponible(habitacion);
 
         Reserva reserva = reservaMapper.requestAEntidad(request);
 
         reservaRepository.save(reserva);
 
         //cambiar estado habitación
+        habitacion = habitacionClient.ocuparPorReserva(request.idHabitacion());
+
 
         log.info("Reserva registrada exitosamente");
 
         return reservaMapper.entidadAResponse(
                 reserva,
-                huesped,null
+                huesped,habitacion
         );
     }
 
     @Override
     public ReservaResponse actualizar(ReservaRequest request, Long id) {
-        return null;
+        Reserva reserva= buscarReservaActiva(id);
+
+        validarDatosNoModificables(reserva,request);
+
+        aplicarActualizacionFechas(reserva,request);
+
+
+        return obtenerRespuestaCompleta(reserva);
     }
 
 
@@ -93,9 +115,39 @@ public class ReservaServiceImpl implements ReservaService {
                 reservaRepository::existsByIdHuespedAndEstadoReservaIn);
     }
 
+
+    @Override
+    public ReservaResponse actualizarEstado(Long idReserva, Long idEstado) {
+        Reserva reserva = buscarReservaActiva(idReserva);
+
+        EstadoReserva nuevoEstado = EstadoReserva.obtenerEstadoReservaPorCodigo(idEstado);
+
+        HuespedResponse huesped = obtenerHuespedSinEstado(reserva.getIdHuesped());
+
+        HabitacionResponse habitacion = aplicarCambioEstado(reserva, nuevoEstado);
+
+        return reservaMapper.entidadAResponse(reserva,huesped,habitacion);
+    }
+
     @Override
     public void eliminar(Long id) {
 
+        Reserva reserva = buscarReservaActiva(id);
+
+        reserva.eliminar();
+
+        if (reserva.getEstadoReserva() == EstadoReserva.CONFIRMADA)
+            habitacionClient.liberarPorReserva(reserva.getIdHabitacion());
+
+    }
+
+    private HabitacionResponse obtenerHabitacionActiva(Long id){
+
+        return validarObjetoRecibido(
+                id,
+                habitacionClient::obtenerHabitacionActivaPorId,
+                "habitacion activa no encontrada con id: " + id
+        );
     }
 
     private HuespedResponse obtenerHuespedSinEstado(Long id) {
@@ -137,6 +189,74 @@ public class ReservaServiceImpl implements ReservaService {
                 .orElseThrow(()-> new RecursoNoEncontradoException(
                         "No se encontro una reserva activa con el id: " + id
                 ));
+    }
+
+    private void validarHabitacionDisponible(HabitacionResponse habitacion){
+
+        if (!EstadoHabitacion.DISPONIBLE.getDescripcion()
+                .equals(habitacion.estadoHabitacion()))
+            throw new IllegalStateException("La habitacion no esta disponible para reserva");
+
+    }
+
+
+    private HabitacionResponse obtenerHabitacionSinEstado(Long id){
+
+        return validarObjetoRecibido(
+                id,
+                habitacionClient::obtenerHabitacionPorIdSinEstado, "Habitacion no encontrada por su id: " + id);
+
+    }
+
+
+    private HabitacionResponse aplicarCambioEstado(Reserva reserva, EstadoReserva nuevoEstado){
+
+        return switch (nuevoEstado){
+            case EN_CURSO -> {reserva.realizarCheckIn();
+                yield obtenerHabitacionActiva(reserva.getIdHabitacion());
+            }
+            case FINALIZADA -> {reserva.realizarCheckOut();
+                yield habitacionClient.liberarPorReserva(reserva.getIdHabitacion());
+            }
+            case CANCELADA -> {reserva.cancelar();
+                yield habitacionClient.liberarPorReserva(reserva.getIdHabitacion());
+            }
+            default -> throw new IllegalArgumentException("no se permite cambiar la reserva de ese estado");
+
+        };
+    }
+
+
+    private void validarDatosNoModificables(Reserva reserva, ReservaRequest request){
+        if (!reserva.getIdHuesped().equals(request.idHuesped())
+        || !reserva.getIdHabitacion().equals(request.idHabitacion()))
+            throw new IllegalArgumentException("no se permite cambiar la habitacion ni el huesped");
+
+    }
+
+    private void aplicarActualizacionFechas(Reserva reserva, ReservaRequest request){
+        switch (reserva.getEstadoReserva()){
+            case CONFIRMADA -> reserva.actualizarFechas(
+                    request.fechaEntrada(),
+                    request.fechaSalida());
+            case EN_CURSO -> {
+                if (!reserva.getFechaEntrada().equals(request.fechaEntrada()))
+                    throw new IllegalArgumentException("no se puede modificar la entrada de una reserva en curso");
+                reserva.actualizarFechaSalida(request.fechaSalida());
+            }
+            default -> throw new IllegalStateException("no se puede actualizar una reseva cancelada o finalizada");
+
+        }
+
+
+    }
+
+    private ReservaResponse obtenerRespuestaCompleta(Reserva reserva) {
+        return reservaMapper.entidadAResponse(
+                reserva,
+                obtenerHuespedSinEstado(reserva.getIdHuesped()),
+                obtenerHabitacionSinEstado(reserva.getIdHabitacion())
+        );
     }
 
 }

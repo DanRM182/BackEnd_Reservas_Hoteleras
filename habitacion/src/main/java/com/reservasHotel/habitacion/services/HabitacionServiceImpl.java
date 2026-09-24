@@ -67,6 +67,27 @@ public class HabitacionServiceImpl implements HabitacionService {
     }
 
     @Override
+    public HabitacionResponse ocuparPorReserva(Long id) {
+        log.info("reservando habitacion cambiando estado a ocupada");
+
+        Habitacion habitacion = obtenerHabitacionActivaPorId(id);
+
+        habitacion.ocuparPorReserva();
+
+        return habitacionMapper.entidadAResponse(habitacion);
+    }
+
+    @Override
+    public HabitacionResponse liberarPorReserva(Long id) {
+
+        Habitacion habitacion = obtenerHabitacionActivaPorId(id);
+
+        habitacion.liberarPorReserva();
+
+        return habitacionMapper.entidadAResponse(habitacion);
+    }
+
+    @Override
     public HabitacionResponse actualizar(HabitacionRequest request, Long id) {
         Habitacion habitacion = obtenerHabitacionActivaPorId(id);
 
@@ -121,9 +142,10 @@ public class HabitacionServiceImpl implements HabitacionService {
 
     private Habitacion obtenerHabitacionPorId(Long id){
         log.info("Buscando habitación con id {}", id);
-        return habitacionRepository.findByIdAndEstadoRegistro(id, EstadoRegistro.ACTIVO)
+        return habitacionRepository.findById(id)
                 .orElseThrow(()-> new RecursoNoEncontradoException("Habitacion activa no encontrada con id:" + id));
     }
+
 
     private void validarDatosUnicos(HabitacionRequest request) {
         log.info("Validando unicidad de número de habitación");

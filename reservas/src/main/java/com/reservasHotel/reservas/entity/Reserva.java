@@ -131,6 +131,12 @@ public class Reserva {
                                 LocalDate fechaSalida) {
         validarDatos(idHabitacion, idHuesped, fechaEntrada, fechaSalida);
 
+        if (fechaEntrada.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException(
+                    "La fecha de entrada debe ser hoy o posterior"
+            );
+        }
+
         return Reserva.builder()
                 .idHabitacion(idHabitacion)
                 .idHuesped(idHuesped)
@@ -139,5 +145,16 @@ public class Reserva {
                 .estadoRegistro(EstadoRegistro.ACTIVO)
                 .estadoReserva(EstadoReserva.CONFIRMADA)
                 .build();
+    }
+
+    public void eliminar (){
+        validarNoEliminada();
+
+        if (this.estadoReserva== null)
+            throw new IllegalStateException("la reserva no tiene un estado valido");
+        if (this.estadoReserva==EstadoReserva.EN_CURSO)
+            throw new IllegalStateException("no se puede eliminar una reserva en curso");
+
+        this.estadoRegistro=EstadoRegistro.ELIMINADO;
     }
 }

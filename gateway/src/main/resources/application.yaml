@@ -4,6 +4,12 @@ server:
 spring:
   application:
     name: gateway
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9000/oauth2/jwks
   cloud:
     gateway:
       server:
@@ -15,6 +21,21 @@ spring:
                 - Path=/api/huespedes/**
               filters:
                 - StripPrefix=2
+
+            - id: habitaciones
+              uri: lb://habitacion
+              predicates:
+                - Path=/api/habitaciones/**
+              filters:
+                - StripPrefix=2
+
+            - id: reservas
+              uri: lb://reservas
+              predicates:
+                - Path=/api/reservas/**
+              filters:
+                - StripPrefix=2
+
     loadbalancer:
       enabled: true
 eureka:
