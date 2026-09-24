@@ -88,7 +88,14 @@ public class ReservaServiceImpl implements ReservaService {
 
     @Override
     public ReservaResponse actualizar(ReservaRequest request, Long id) {
-        return null;
+        Reserva reserva= buscarReservaActiva(id);
+
+        validarDatosNoModificables(reserva,request);
+
+        aplicarActualizacionFechas(reserva,request);
+
+
+        return obtenerRespuestaCompleta(reserva);
     }
 
 
@@ -203,6 +210,39 @@ public class ReservaServiceImpl implements ReservaService {
             default -> throw new IllegalArgumentException("no se permite cambiar la reserva de ese estado");
 
         };
+    }
+
+
+    private void validarDatosNoModificables(Reserva reserva, ReservaRequest request){
+        if (!reserva.getIdHuesped().equals(request.idHuesped())
+        || !reserva.getIdHabitacion().equals(request.idHabitacion()))
+            throw new IllegalArgumentException("no se permite cambiar la habitacion ni el huesped");
+
+    }
+
+    private void aplicarActualizacionFechas(Reserva reserva, ReservaRequest request){
+        switch (reserva.getEstadoReserva()){
+            case CONFIRMADA -> reserva.actualizarFechas(
+                    request.fechaEntrada(),
+                    request.fechaSalida());
+            case EN_CURSO -> {
+                if (!reserva.getFechaEntrada().equals(request.fechaEntrada()))
+                    throw new IllegalArgumentException("no se puede modificar la entrada de una reserva en curso");
+                reserva.actualizarFechaSalida(request.fechaSalida());
+            }
+            default -> throw new IllegalStateException("no se puede actualizar una reseva cancelada o finalizada");
+
+        }
+
+
+    }
+
+    private ReservaResponse obtenerRespuestaCompleta(Reserva reserva) {
+        return reservaMapper.entidadAResponse(
+                reserva,
+                obtenerHuespedSinEstado(reserva.getIdHuesped()),
+                obtenerHabitacionActiva(reserva.getIdHabitacion())
+        );
     }
 
 }

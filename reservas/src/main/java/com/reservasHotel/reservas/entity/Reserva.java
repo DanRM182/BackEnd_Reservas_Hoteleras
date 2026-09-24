@@ -131,6 +131,12 @@ public class Reserva {
                                 LocalDate fechaSalida) {
         validarDatos(idHabitacion, idHuesped, fechaEntrada, fechaSalida);
 
+        if (fechaEntrada.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException(
+                    "La fecha de entrada debe ser hoy o posterior"
+            );
+        }
+
         return Reserva.builder()
                 .idHabitacion(idHabitacion)
                 .idHuesped(idHuesped)
