@@ -1,11 +1,12 @@
 package com.reservasHotel.commons.clients;
 
+import com.reservasHotel.commons.configuration.FeignClientConfig;
 import com.reservasHotel.commons.dto.huespedes.HuespedResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "huespedes")
+@FeignClient(name = "huespedes", configuration = FeignClientConfig.class)
 public interface HuespedClient {
     @GetMapping("{id}")
     HuespedResponse obtenerHuespedActivoPorId(@PathVariable Long id);

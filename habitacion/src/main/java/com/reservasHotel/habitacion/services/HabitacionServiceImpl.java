@@ -54,14 +54,43 @@ public class HabitacionServiceImpl implements HabitacionService {
     public HabitacionResponse registrar(HabitacionRequest request) {
         log.info("Registrando datos de habitación");
 
-        Habitacion habitacion = habitacionMapper.requestAEntidad(request);
+        TipoHabitacion tipo = TipoHabitacion.obtenerTipoHabitacionPorCodigo(
+                request.idTipoHabitacion()
+        );
 
+        Habitacion habitacion = Habitacion.crear(
+                request.numeroHabitacion().trim(),
+                tipo,
+                request.precio(),
+                request.capacidad()
+        );
         validarDatosUnicos(request);
 
         habitacionRepository.save(habitacion);
 
         log.info("Habitación registrada y con estado activo con id: {}",
                 habitacion.getId());
+
+        return habitacionMapper.entidadAResponse(habitacion);
+    }
+
+    @Override
+    public HabitacionResponse ocuparPorReserva(Long id) {
+        log.info("reservando habitacion cambiando estado a ocupada");
+
+        Habitacion habitacion = obtenerHabitacionActivaPorId(id);
+
+        habitacion.ocuparPorReserva();
+
+        return habitacionMapper.entidadAResponse(habitacion);
+    }
+
+    @Override
+    public HabitacionResponse liberarPorReserva(Long id) {
+
+        Habitacion habitacion = obtenerHabitacionActivaPorId(id);
+
+        habitacion.liberarPorReserva();
 
         return habitacionMapper.entidadAResponse(habitacion);
     }
@@ -121,9 +150,10 @@ public class HabitacionServiceImpl implements HabitacionService {
 
     private Habitacion obtenerHabitacionPorId(Long id){
         log.info("Buscando habitación con id {}", id);
-        return habitacionRepository.findByIdAndEstadoRegistro(id, EstadoRegistro.ACTIVO)
+        return habitacionRepository.findById(id)
                 .orElseThrow(()-> new RecursoNoEncontradoException("Habitacion activa no encontrada con id:" + id));
     }
+
 
     private void validarDatosUnicos(HabitacionRequest request) {
         log.info("Validando unicidad de número de habitación");

@@ -67,20 +67,12 @@ public class Habitacion {
     }
     public void eliminar(){
         validarNoEliminado();
-        if (this.estadoHabitacion == EstadoHabitacion.OCUPADA)
-            throw new IllegalStateException("No se puede eliminar habitacion ocupada");
+
+        validarNoOcupada();
 
         this.estadoRegistro=EstadoRegistro.ELIMINADO;
     }
 
-    public void actualizarTipo(TipoHabitacion tipo){
-        validarNoEliminado();
-
-        if (tipo==null)
-            throw new IllegalArgumentException("El tipo de habitación es requerido");
-
-        this.tipoHabitacion = tipo;
-    }
 
     public void actualizarEstado(EstadoHabitacion nuevoEstado){
         validarNoEliminado();
@@ -90,7 +82,7 @@ public class Habitacion {
         if (this.estadoHabitacion == null)
             throw new IllegalStateException("La habitacion no tiene un estado válido");
 
-        if (this.estadoHabitacion==EstadoHabitacion.OCUPADA && nuevoEstado == EstadoHabitacion.DISPONIBLE)
+        if (estaOcupada() && nuevoEstado == EstadoHabitacion.DISPONIBLE)
             throw new IllegalStateException("No se puede cambiar manualmente el estado " +
                     "de una habitacion ocupada a disponible");
 
@@ -103,6 +95,7 @@ public class Habitacion {
     public void actualizar(String numeroHabitacion, BigDecimal precio, Integer capacidad,
                            TipoHabitacion tipoHabitacion){
         validarNoEliminado();
+        validarNoOcupada();
 
         validarDatos(numeroHabitacion,precio, tipoHabitacion,capacidad);
 
@@ -126,29 +119,44 @@ public class Habitacion {
                 .build();
     }
 
-    /*
-    public void ocuparPorReserva(Long idReserva){
-        validarNoEliminado();
-        ValoresNumericosUtils.validarLongPositivo(idReserva, "El id de reserva es requerido y debe ser posuitivo");
-        if (this.estado== EstadoHabitacion.OCUPADA && idReserva.equals(this.idReservaActual))
-            return;
-        if (this.estado != EstadoHabitacion.DISPONIBLE || this.idReservaActual != null)
-            throw new IllegalStateException("La habitacion no esta disponible para asignar reserva");
-        this.idReservaActual=idReserva;
-        this.estado=EstadoHabitacion.OCUPADA;
-    }
-*
-    public void liberarPorReserva(Long idReserva){
-        validarNoEliminado();
-        ValoresNumericosUtils.validarLongPositivo(idReserva, "El id de reserva debe de ser positivo");
-        if (this.estado != EstadoHabitacion.OCUPADA)
-            throw new IllegalStateException("Solo se puede liberar una habitacion ocupada");
-        if (!idReserva.equals(this.idReservaActual))
-            throw new IllegalStateException("La habitacion no esta ocupada por la reserva indicada");
-        this.idReservaActual=null;
-        this.estado=EstadoHabitacion.DISPONIBLE;
 
+
+    private boolean estaOcupada() {
+        return this.estadoHabitacion == EstadoHabitacion.OCUPADA;
     }
-*/
+
+    private void validarNoOcupada() {
+        if (estaOcupada()) {
+            throw new IllegalStateException(
+                    "No se permite modificar o eliminar una habitación ocupada"
+            );
+        }
+    }
+
+
+
+
+        //comprueba que no este eliminada
+    //rechaza si esta en otros estados-solo debe de ser disponible
+    //si esta disponible cambia su estado a ocupada
+
+    public void ocuparPorReserva(){
+        validarNoEliminado();
+        if (this.estadoHabitacion != EstadoHabitacion.DISPONIBLE)
+            throw new IllegalStateException("La habitacion debe estar disponible par reserva");
+        this.estadoHabitacion=EstadoHabitacion.OCUPADA;
+    }
+
+
+    public void liberarPorReserva(){
+        validarNoEliminado();
+
+        if (!estaOcupada())
+            throw new IllegalStateException("La habitacion debe de estar ocupada para liberarla");
+
+        this.estadoHabitacion=EstadoHabitacion.DISPONIBLE;
+    }
+
+
 
 }

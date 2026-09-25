@@ -23,7 +23,7 @@ public record ReservaRequest(
                 description = "Fecha y hora programada para entrada de la reserva. Debe ser una fecha y hora actual o futura",
                 example = "25/09/2026", type = "string", format = "date")
         @NotNull(message = "La fecha de entrada debe ser futura")
-        @FutureOrPresent(message = "La fecha de la entrada debe ser futura")
+        //@FutureOrPresent(message = "La fecha de la entrada debe ser futura")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
         LocalDate fechaEntrada,
 

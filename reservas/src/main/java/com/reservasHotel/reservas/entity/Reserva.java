@@ -28,7 +28,7 @@ public class Reserva {
     @Column(name = "ID_HUESPED", nullable = false)
     private Long idHuesped;
 
-    @Column(name = "ESTADO_RESERVA", nullable = false)
+    @Column(name = "ESTADO_RESERVA")
     @Enumerated(EnumType.STRING)
     private EstadoReserva estadoReserva;
 
@@ -127,9 +127,25 @@ public class Reserva {
 
     }
 
+    public void cambiarHuesped(Long nuevoHuespedId){
+        validarNoEliminada();
+
+        if (this.estadoReserva !=EstadoReserva.CONFIRMADA)
+            throw new IllegalStateException("Solo se púede cambiar el huesped antes del chekc in");
+        validarId(nuevoHuespedId,"huesped");
+        this.idHuesped = nuevoHuespedId;
+
+    }
+
     public static Reserva crear(Long idHabitacion, Long idHuesped, LocalDate fechaEntrada,
                                 LocalDate fechaSalida) {
         validarDatos(idHabitacion, idHuesped, fechaEntrada, fechaSalida);
+
+        if (fechaEntrada.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException(
+                    "La fecha de entrada debe ser hoy o posterior"
+            );
+        }
 
         return Reserva.builder()
                 .idHabitacion(idHabitacion)
@@ -139,5 +155,16 @@ public class Reserva {
                 .estadoRegistro(EstadoRegistro.ACTIVO)
                 .estadoReserva(EstadoReserva.CONFIRMADA)
                 .build();
+    }
+
+    public void eliminar (){
+        validarNoEliminada();
+
+        if (this.estadoReserva== null)
+            throw new IllegalStateException("la reserva no tiene un estado valido");
+        if (this.estadoReserva==EstadoReserva.EN_CURSO)
+            throw new IllegalStateException("no se puede eliminar una reserva en curso");
+
+        this.estadoRegistro=EstadoRegistro.ELIMINADO;
     }
 }

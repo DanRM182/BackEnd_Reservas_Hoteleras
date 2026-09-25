@@ -34,4 +34,20 @@ public class HabitacionController extends CrudController <HabitacionRequest, Hab
                 service.actualizarEstado(id, idEstado)
         );
     }
+    @PatchMapping("/{id}/ocupar")
+    public ResponseEntity<HabitacionResponse> ocuparPorReserva(
+        @PathVariable("id")
+        @Positive(message = "El id debe de ser positivo") Long id
+    ){
+        return ResponseEntity.ok(service.ocuparPorReserva(id));
+
+    }
+
+    @PatchMapping("/{id}/liberar")
+    public ResponseEntity<HabitacionResponse> liberarPorReserva(
+            @PathVariable("id")
+            @Positive(message = "el id debe ser positivo") Long id
+    ){
+        return ResponseEntity.ok(service.liberarPorReserva(id));
+    }
 }
