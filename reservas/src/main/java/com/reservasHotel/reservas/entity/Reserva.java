@@ -127,6 +127,16 @@ public class Reserva {
 
     }
 
+    public void cambiarHuesped(Long nuevoHuespedId){
+        validarNoEliminada();
+
+        if (this.estadoReserva !=EstadoReserva.CONFIRMADA)
+            throw new IllegalStateException("Solo se púede cambiar el huesped antes del chekc in");
+        validarId(nuevoHuespedId,"huesped");
+        this.idHuesped = nuevoHuespedId;
+
+    }
+
     public static Reserva crear(Long idHabitacion, Long idHuesped, LocalDate fechaEntrada,
                                 LocalDate fechaSalida) {
         validarDatos(idHabitacion, idHuesped, fechaEntrada, fechaSalida);

@@ -15,8 +15,9 @@ import java.util.Optional;
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     List<Reserva> findByEstadoRegistro(EstadoRegistro estadoRegistro);
 
+    List<Reserva> findByEstadoRegistroAndEstadoReservaNot( EstadoRegistro estadoRegistro, EstadoReserva estadoReserva);
+
     Optional<Reserva> findByIdAndEstadoRegistro(Long id, EstadoRegistro estadoRegistro);
-    List<Reserva>findAllByEstadoRegistro(EstadoRegistro estadoRegistro);
 
     boolean existsByIdHuespedAndEstadoReservaIn(Long idHuesped, Collection<EstadoReserva> estadoReservas);
 }

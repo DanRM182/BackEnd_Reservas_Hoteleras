@@ -24,6 +24,8 @@ import com.reservasHotel.reservas.repository.ReservaRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,9 +45,11 @@ public class ReservaServiceImpl implements ReservaService {
     @Override
     public List<ReservaResponse> listar() {
         log.info("Listando todas las reservas activas");
+        var reservas = esAdmin()
+                ? reservaRepository.findByEstadoRegistro(EstadoRegistro.ACTIVO)
+                : reservaRepository.findByEstadoRegistroAndEstadoReservaNot(EstadoRegistro.ACTIVO, EstadoReserva.CANCELADA);
 
-        return reservaRepository.findByEstadoRegistro(EstadoRegistro.ACTIVO)
-                .stream().map(this::obtenerRespuestaCompleta).peek(n -> log.info("IDS reservas: {}",n.id()))
+        return reservas.stream().map(this::obtenerRespuestaCompleta).peek(n -> log.info("IDS reservas: {}",n.id()))
                 .toList();
     }
 
@@ -91,7 +95,14 @@ public class ReservaServiceImpl implements ReservaService {
 
         validarDatosNoModificables(reserva,request);
 
+        boolean cambiaHuesped = !reserva.getIdHuesped().equals(request.idHuesped());
+        if (cambiaHuesped)
+            obtenerHuespedActivo(request.idHuesped());
+
+
         aplicarActualizacionFechas(reserva,request);
+        if (cambiaHuesped)
+            reserva.cambiarHuesped(request.idHuesped());
 
 
         return obtenerRespuestaCompleta(reserva);
@@ -221,9 +232,13 @@ public class ReservaServiceImpl implements ReservaService {
 
 
     private void validarDatosNoModificables(Reserva reserva, ReservaRequest request){
+        if (!reserva.getIdHabitacion().equals(request.idHabitacion()))
+            throw new IllegalStateException("Todavía no se permite cambiar la habitación");
+
+
         if (!reserva.getIdHuesped().equals(request.idHuesped())
-        || !reserva.getIdHabitacion().equals(request.idHabitacion()))
-            throw new IllegalArgumentException("no se permite cambiar la habitacion ni el huesped");
+                && reserva.getEstadoReserva() != EstadoReserva.CONFIRMADA)
+            throw new IllegalStateException("Solo se puede cambiar el huésped antes del check-in");
 
     }
 
@@ -250,6 +265,15 @@ public class ReservaServiceImpl implements ReservaService {
                 obtenerHuespedSinEstado(reserva.getIdHuesped()),
                 obtenerHabitacionSinEstado(reserva.getIdHabitacion())
         );
+    }
+
+    private  boolean esAdmin(){
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!(auth instanceof JwtAuthenticationToken jwt))return false;
+
+        List<String> roles=jwt.getToken().getClaimAsStringList("roles");
+        return roles != null && roles.contains("ROLE_ADMIN");
+
     }
 
 }
