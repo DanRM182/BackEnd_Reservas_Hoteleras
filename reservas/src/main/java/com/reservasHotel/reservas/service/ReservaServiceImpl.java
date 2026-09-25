@@ -45,23 +45,16 @@ public class ReservaServiceImpl implements ReservaService {
         log.info("Listando todas las reservas activas");
 
         return reservaRepository.findByEstadoRegistro(EstadoRegistro.ACTIVO)
-                .stream().map(this::obtenerRespuestaCompleta)
+                .stream().map(this::obtenerRespuestaCompleta).peek(n -> log.info("IDS reservas: {}",n.id()))
                 .toList();
     }
 
-    /*reserva -> reservaMapper.entidadAResponse(
-                        reserva,
-                        obtenerHuespedSinEstado(reserva.getIdHuesped()),
-                        null
-                )*/
 
     @Override
     public ReservaResponse obtenerPorId(Long id) {
         return obtenerRespuestaCompleta(buscarReservaActiva(id));
     }
 
-    /*
-    * reservaMapper.entidadAResponse(buscarReservaActiva(id))*/
 
     @Override
     public ReservaResponse registrar(ReservaRequest request) {
